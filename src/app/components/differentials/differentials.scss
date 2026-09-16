@@ -1,0 +1,72 @@
+@use '../../../styles/variables' as *;
+
+.diff__heading {
+  max-width: 680px;
+  margin-bottom: 44px;
+}
+
+.diff__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+}
+
+.diff__item {
+  padding: 28px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.diff__item:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.diff__icon {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.diff__icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.diff__title {
+  font-size: 1.12rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.diff__text {
+  font-size: 0.94rem;
+  color: var(--color-text-muted);
+}
+
+.diff__cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 44px;
+}
+
+/* Responsive ------------------------------------------------------------ */
+@media (min-width: $breakpoint-sm) {
+  .diff__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: $breakpoint-lg) {
+  .diff__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

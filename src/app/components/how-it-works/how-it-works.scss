@@ -1,0 +1,66 @@
+@use '../../../styles/variables' as *;
+
+.how {
+  background: var(--color-white);
+}
+
+.how__heading {
+  max-width: 680px;
+  margin-bottom: 44px;
+}
+
+.how__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.how__step {
+  position: relative;
+  padding: 28px 28px 28px 88px;
+  background: var(--color-primary-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.how__step-number {
+  position: absolute;
+  left: 26px;
+  top: 28px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.05rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.how__step-title {
+  font-size: 1.12rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.how__step-text {
+  font-size: 0.94rem;
+  color: var(--color-text-muted);
+}
+
+.how__cta {
+  margin-top: 40px;
+}
+
+/* Responsive ------------------------------------------------------------ */
+@media (min-width: $breakpoint-md) {
+  .how__steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
