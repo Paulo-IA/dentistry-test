@@ -110,27 +110,26 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 2px 4px -1px rgba(15, 111, 198, 0.25);
 }
 
-/* Signature 3D tooth ---------------------------------------------------- */
+/* Signature 3D tooth (model-viewer) ------------------------------------- */
 .hero__stage {
   display: grid;
   place-items: center;
   gap: 20px;
 }
 
-.tooth-view {
+.hero-model {
   position: relative;
-  width: clamp(240px, 34vw, 400px);
+  width: clamp(300px, 36vw, 430px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  perspective: 1000px;
 }
 
-/* Soft glowing halo that makes the tooth feel like it floats in space. */
-.tooth-glow {
+/* Soft glowing halo that makes the model feel like it floats in space. */
+.hero-model__glow {
   position: absolute;
-  inset: 6% 0;
-  width: 120%;
+  inset: 4% 0;
+  width: 118%;
   aspect-ratio: 1;
   border-radius: 50%;
   background: radial-gradient(
@@ -141,61 +140,15 @@
   );
   filter: blur(42px);
   opacity: 0.72;
+  pointer-events: none;
 }
 
-/* Scroll-driven rotation (transform set from Angular signal). */
-.tooth-scroll {
+.hero-model__viewer {
   position: relative;
-  width: 72%;
-  aspect-ratio: 1;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-/* Slow continuous idle spin before the user scrolls. */
-.tooth-idle {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  animation: tooth-idle-spin 20s linear infinite;
-}
-
-@keyframes tooth-idle-spin {
-  from {
-    transform: rotateX(0deg) rotateY(0deg);
-  }
-  to {
-    transform: rotateX(0deg) rotateY(360deg);
-  }
-}
-
-.tooth-slice {
-  position: absolute;
-  inset: 0;
-  display: block;
-  transform-style: preserve-3d;
-}
-
-.tooth-slice svg {
-  display: block;
   width: 100%;
   height: 100%;
-}
-
-.tooth-slice--front {
-  filter: drop-shadow(0 26px 34px rgba(15, 61, 110, 0.34)) drop-shadow(0 6px 12px rgba(15, 111, 198, 0.2));
-}
-
-/* Faux ground shadow anchored beneath the tooth. */
-.tooth-ground {
-  position: absolute;
-  left: 22%;
-  right: 22%;
-  bottom: 3%;
-  height: 18px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(15, 61, 110, 0.4), transparent 68%);
-  filter: blur(10px);
+  background: transparent;
+  outline: none;
 }
 
 .hero__stage-tag {
@@ -239,7 +192,7 @@
 }
 
 @media (max-width: $breakpoint-md) {
-  .tooth-view {
-    width: clamp(210px, 62vw, 320px);
+  .hero-model {
+    width: clamp(240px, 66vw, 340px);
   }
 }

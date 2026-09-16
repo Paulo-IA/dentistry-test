@@ -1,15 +1,15 @@
-import { Component, HostListener, computed, signal } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, computed } from '@angular/core';
 import { siteConfig } from '../../config/site.config';
 import { buildWhatsAppUrl, whatsappConfig } from '../../config/whatsapp.config';
+import { ScrollPositionService } from '../../services/scroll-position.service';
 
-interface ToothLayer {
-  depth: number;
-  color: string;
-}
-
-/** Hero section with the signature scroll-driven 3D tooth. */
+/**
+ * Hero section featuring a real 3D molar (glTF) rendered with <model-viewer>
+ * and rotated by page scroll — the signature branding moment of the page.
+ */
 @Component({
   selector: 'app-hero',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <section class="hero" id="inicio">
       <div class="hero__glow hero__glow--one" aria-hidden="true"></div>
@@ -50,31 +50,26 @@ interface ToothLayer {
           </ul>
         </div>
 
-        <!-- Signature scroll-driven 3D tooth (hero only). -->
+        <!-- Signature scroll-rotated 3D molar (hero only). -->
         <div class="hero__stage">
-          <div class="tooth-view">
-            <div class="tooth-glow" aria-hidden="true"></div>
-
-            <div class="tooth-scroll" [style.transform]="rotation()" aria-hidden="true">
-              <div class="tooth-idle">
-                @for (layer of layers; track layer.depth) {
-                  <span
-                    class="tooth-slice"
-                    [class.tooth-slice--front]="layer.depth === 0"
-                    [style.transform]="'translateZ(' + layer.depth + 'px)'"
-                    [style.color]="layer.color"
-                  >
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path
-                        d="M7.391 3.127c-.842.17-1.539.652-2.055 1.504-1.01 1.65-1.084 4.644.242 7.104a2 2 0 0 1 .178.43c.452 1.676.914 5.046 1.583 7.71.4 1.596 1.691 1.265 1.94-.362.456-2.971 1.34-5.862 2.708-5.862 1.367 0 2.253 2.892 2.71 5.862.25 1.628 1.54 1.96 1.94.363.67-2.666 1.13-6.038 1.581-7.712a2 2 0 0 1 .178-.428c1.39-2.568 1.258-5.452.241-7.11q-.782-1.274-2.057-1.501c-.712-.122-1.497.02-2.302.414a5.34 5.34 0 0 1-4.592-.001c-.619-.301-1.708-.53-2.295-.411"
-                      />
-                    </svg>
-                  </span>
-                }
-              </div>
-            </div>
-
-            <div class="tooth-ground" aria-hidden="true"></div>
+          <div class="hero-model">
+            <div class="hero-model__glow" aria-hidden="true"></div>
+            <model-viewer
+              class="hero-model__viewer"
+              src="models/tooth.glb"
+              alt="Ilustração 3D de um dente molar"
+              [attr.poster]="poster"
+              loading="eager"
+              disable-zoom
+              auto-rotate
+              auto-rotate-delay="0"
+              rotation-per-second="10deg"
+              shadow-intensity="1"
+              exposure="1.05"
+              environment-image="neutral"
+              interaction-prompt="none"
+              [attr.camera-orbit]="cameraOrbit()"
+            ></model-viewer>
           </div>
 
           <p class="hero__stage-tag">
@@ -91,45 +86,26 @@ export class Hero {
   protected readonly siteConfig = siteConfig;
   protected readonly whatsappHref = buildWhatsAppUrl(whatsappConfig.messages.hero);
 
-  /** Depth slices (translateZ) and tint, back to front. */
-  protected readonly layers: ToothLayer[] = [
-    { depth: -16, color: '#86b0d6' },
-    { depth: -10, color: '#a5c8e4' },
-    { depth: -5, color: '#c6dcf0' },
-    { depth: 0, color: '#ffffff' },
-  ];
+  /** Flat tooth placeholder shown while the glTF loads / on failure. */
+  protected readonly poster =
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='12' fill='%23eaf3fb'/%3E%3Cpath d='M7.391 3.127c-.842.17-1.539.652-2.055 1.504-1.01 1.65-1.084 4.644.242 7.104a2 2 0 0 1 .178.43c.452 1.676.914 5.046 1.583 7.71.4 1.596 1.691 1.265 1.94-.362.456-2.971 1.34-5.862 2.708-5.862 1.367 0 2.253 2.892 2.71 5.862.25 1.628 1.54 1.96 1.94.363.67-2.666 1.13-6.038 1.581-7.712a2 2 0 0 1 .178-.428c1.39-2.568 1.258-5.452.241-7.11q-.782-1.274-2.057-1.501c-.712-.122-1.497.02-2.302.414a5.34 5.34 0 0 1-4.592-.001c-.619-.301-1.708-.53-2.295-.411' fill='%230f6fc6'/%3E%3C/svg%3E";
 
-  /** Throttle guard so the scroll listener updates at most once per frame. */
-  private rafPending = false;
-  private rafId: number | null = null;
-
-  /** Current window scroll offset (pixels). */
-  protected readonly scrollY = signal(0);
+  constructor(private readonly scroll: ScrollPositionService) {}
 
   /**
-   * Maps scroll position to a 3D rotation: continuous Y rotation across the
-   * whole page plus a gentle X wobble for a natural "floating" feel.
+   * Maps global scroll position to a model-viewer camera orbit: a continuous
+   * theta (horizontal orbit) spin across the whole page plus a subtle phi wobble.
    */
-  protected readonly rotation = computed(() => {
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      // Static, calm pose for reduced-motion users.
-      return 'rotateX(3deg) rotateY(28deg)';
+  protected readonly cameraOrbit = computed(() => {
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      return '0deg 75deg auto';
     }
-    const y = this.scrollY();
-    const rotateY = (y * 0.18) % 360;
-    const rotateX = 3 + Math.sin(y * 0.0025) * 2.5;
-    return `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+    const y = this.scroll.scrollY();
+    const theta = (y * 0.2) % 360;
+    const phi = 75 + Math.sin(y * 0.0025) * 4;
+    return `${theta.toFixed(2)}deg ${phi.toFixed(2)}deg auto`;
   });
-
-  @HostListener('window:scroll')
-  onScroll(): void {
-    if (this.rafPending) {
-      return;
-    }
-    this.rafPending = true;
-    this.rafId = requestAnimationFrame(() => {
-      this.rafPending = false;
-      this.scrollY.set(window.scrollY);
-    });
-  }
 }
