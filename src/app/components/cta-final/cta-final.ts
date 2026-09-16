@@ -6,6 +6,8 @@ import { buildWhatsAppUrl, whatsappConfig } from '../../config/whatsapp.config';
   selector: 'app-cta-final',
   template: `
     <section class="cta-final" id="contato">
+      <div class="blob blob--lg blob--primary cta-final__glow cta-final__glow--one" aria-hidden="true"></div>
+      <div class="blob blob--md blob--light cta-final__glow cta-final__glow--two" aria-hidden="true"></div>
       <div class="container">
         <div class="cta-final__card">
           <span class="cta-final__eyebrow">Agende sua avaliação</span>

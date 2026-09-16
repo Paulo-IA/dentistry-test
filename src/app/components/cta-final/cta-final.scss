@@ -1,30 +1,57 @@
 @use '../../../styles/variables' as *;
 
 .cta-final {
-  padding-block: clamp(56px, 8vw, 96px);
+  position: relative;
+  padding-block: clamp(64px, 9vw, 104px);
+  overflow: hidden;
   background:
-    radial-gradient(700px 360px at 20% 0%, rgba(255, 255, 255, 0.14), transparent 65%),
-    linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-darker));
+    radial-gradient(820px 460px at 78% -10%, rgba(84, 168, 232, 0.5), transparent 60%),
+    radial-gradient(720px 420px at 8% 110%, rgba(11, 92, 166, 0.55), transparent 62%),
+    linear-gradient(135deg, #0f6fc6 0%, #0a5bb0 55%, #084a87 100%);
+}
+
+/* Soft floating glows -------------------------------------------------- */
+.cta-final__glow--one {
+  top: -140px;
+  right: -60px;
+  opacity: 0.7;
+}
+
+.cta-final__glow--two {
+  bottom: -180px;
+  left: -80px;
+  opacity: 0.8;
 }
 
 .cta-final__card {
-  max-width: 720px;
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
   margin: 0 auto;
   text-align: center;
+  padding: clamp(32px, 5vw, 56px);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 30px 64px -24px rgba(4, 34, 66, 0.55);
 }
 
 .cta-final__eyebrow {
   display: inline-block;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-primary-light);
-  margin-bottom: 14px;
+  color: rgba(234, 243, 251, 0.9);
+  margin-bottom: 16px;
 }
 
 .cta-final__title {
-  font-size: clamp(1.7rem, 4vw, 2.6rem);
+  font-size: clamp(1.9rem, 4vw, 2.7rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--color-white);
@@ -32,18 +59,23 @@
 }
 
 .cta-final__text {
-  font-size: clamp(1rem, 1.5vw, 1.12rem);
+  font-size: clamp(1.02rem, 1.5vw, 1.14rem);
+  line-height: 1.6;
   color: rgba(255, 255, 255, 0.85);
   max-width: 540px;
-  margin: 0 auto 32px;
+  margin: 0 auto 34px;
 }
 
 .cta-final__btn {
-  background: var(--color-white);
+  background: linear-gradient(180deg, #ffffff 0%, #eaf3fb 100%);
   color: var(--color-primary-darker);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 14px 30px -12px rgba(3, 25, 48, 0.6);
 }
 
 .cta-final__btn:hover {
-  background: var(--color-primary-light);
-  box-shadow: var(--shadow-md);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 20px 44px -16px rgba(3, 25, 48, 0.7);
 }

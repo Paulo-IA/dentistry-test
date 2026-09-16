@@ -1,17 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, computed, signal } from '@angular/core';
 import { siteConfig } from '../../config/site.config';
 import { buildWhatsAppUrl, whatsappConfig } from '../../config/whatsapp.config';
 
-/** Hero section: headline, value summary and primary WhatsApp CTA. */
+interface ToothLayer {
+  depth: number;
+  color: string;
+}
+
+/** Hero section with the signature scroll-driven 3D tooth. */
 @Component({
   selector: 'app-hero',
   template: `
     <section class="hero" id="inicio">
+      <div class="hero__glow hero__glow--one" aria-hidden="true"></div>
+      <div class="hero__glow hero__glow--two" aria-hidden="true"></div>
       <div class="container hero__grid">
         <div class="hero__content">
           <span class="eyebrow">Odontologia em São Paulo</span>
           <h1 class="hero__title">
-            Cuidado odontológico completo, humano e de confiança
+            Cuidado odontológico completo, humano e
+            <span class="text-gradient">de confiança</span>
           </h1>
           <p class="hero__subtitle">
             Restaurações, limpeza e profilaxia e tratamento de canal em um atendimento
@@ -42,22 +50,37 @@ import { buildWhatsAppUrl, whatsappConfig } from '../../config/whatsapp.config';
           </ul>
         </div>
 
-        <div class="hero__media">
-          <img
-            class="hero__image"
-            src="https://images.unsplash.com/photo-1662837775146-871f817c7887?auto=format&fit=crop&w=1000&q=80"
-            alt="Dentista realizando avaliação em paciente em consultório moderno e iluminado"
-            width="1000"
-            height="667"
-            fetchpriority="high"
-          />
-          <div class="hero__badge">
-            <span class="hero__badge-icon" aria-hidden="true">✓</span>
-            <div>
-              <strong>Diagnóstico em consulta</strong>
-              <small>O plano de tratamento é definido após avaliação presencial.</small>
+        <!-- Signature scroll-driven 3D tooth (hero only). -->
+        <div class="hero__stage">
+          <div class="tooth-view">
+            <div class="tooth-glow" aria-hidden="true"></div>
+
+            <div class="tooth-scroll" [style.transform]="rotation()" aria-hidden="true">
+              <div class="tooth-idle">
+                @for (layer of layers; track layer.depth) {
+                  <span
+                    class="tooth-slice"
+                    [class.tooth-slice--front]="layer.depth === 0"
+                    [style.transform]="'translateZ(' + layer.depth + 'px)'"
+                    [style.color]="layer.color"
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M7.391 3.127c-.842.17-1.539.652-2.055 1.504-1.01 1.65-1.084 4.644.242 7.104a2 2 0 0 1 .178.43c.452 1.676.914 5.046 1.583 7.71.4 1.596 1.691 1.265 1.94-.362.456-2.971 1.34-5.862 2.708-5.862 1.367 0 2.253 2.892 2.71 5.862.25 1.628 1.54 1.96 1.94.363.67-2.666 1.13-6.038 1.581-7.712a2 2 0 0 1 .178-.428c1.39-2.568 1.258-5.452.241-7.11q-.782-1.274-2.057-1.501c-.712-.122-1.497.02-2.302.414a5.34 5.34 0 0 1-4.592-.001c-.619-.301-1.708-.53-2.295-.411"
+                      />
+                    </svg>
+                  </span>
+                }
+              </div>
             </div>
+
+            <div class="tooth-ground" aria-hidden="true"></div>
           </div>
+
+          <p class="hero__stage-tag">
+            <span>Dra. Mariana Serra</span>
+            <span class="hero__stage-cro">{{ siteConfig.cro }}</span>
+          </p>
         </div>
       </div>
     </section>
@@ -67,4 +90,46 @@ import { buildWhatsAppUrl, whatsappConfig } from '../../config/whatsapp.config';
 export class Hero {
   protected readonly siteConfig = siteConfig;
   protected readonly whatsappHref = buildWhatsAppUrl(whatsappConfig.messages.hero);
+
+  /** Depth slices (translateZ) and tint, back to front. */
+  protected readonly layers: ToothLayer[] = [
+    { depth: -16, color: '#86b0d6' },
+    { depth: -10, color: '#a5c8e4' },
+    { depth: -5, color: '#c6dcf0' },
+    { depth: 0, color: '#ffffff' },
+  ];
+
+  /** Throttle guard so the scroll listener updates at most once per frame. */
+  private rafPending = false;
+  private rafId: number | null = null;
+
+  /** Current window scroll offset (pixels). */
+  protected readonly scrollY = signal(0);
+
+  /**
+   * Maps scroll position to a 3D rotation: continuous Y rotation across the
+   * whole page plus a gentle X wobble for a natural "floating" feel.
+   */
+  protected readonly rotation = computed(() => {
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // Static, calm pose for reduced-motion users.
+      return 'rotateX(3deg) rotateY(28deg)';
+    }
+    const y = this.scrollY();
+    const rotateY = (y * 0.18) % 360;
+    const rotateX = 3 + Math.sin(y * 0.0025) * 2.5;
+    return `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+  });
+
+  @HostListener('window:scroll')
+  onScroll(): void {
+    if (this.rafPending) {
+      return;
+    }
+    this.rafPending = true;
+    this.rafId = requestAnimationFrame(() => {
+      this.rafPending = false;
+      this.scrollY.set(window.scrollY);
+    });
+  }
 }

@@ -1,6 +1,6 @@
 /*
- * Global styles: design tokens, base reset and shared utilities
- * (buttons, containers, section headings) used across all components.
+ * Global styles: design tokens, base reset, shared utilities
+ * (buttons, containers, section headings) and the scroll-reveal system.
  */
 
 :root {
@@ -9,26 +9,38 @@
   --color-primary-dark: #0b5ca6;
   --color-primary-darker: #084a87;
   --color-primary-light: #eaf3fb;
-  --color-primary-soft: #f6fafe;
+  --color-primary-soft: #f4f9fe;
 
   --color-white: #ffffff;
   --color-text: #2e2e2e;
   --color-text-muted: #5a6b7c;
-  --color-border: #e1ecf5;
+  --color-border: #dbe9f6;
 
   /* WhatsApp green - used ONLY on WhatsApp branded elements */
   --color-whatsapp: #25d366;
   --color-whatsapp-dark: #1daf5a;
 
-  /* Elevation / shape */
-  --shadow-sm: 0 1px 2px rgba(15, 111, 198, 0.06), 0 8px 20px rgba(15, 111, 198, 0.08);
-  --shadow-md: 0 12px 32px rgba(15, 111, 198, 0.14);
-  --shadow-lg: 0 24px 48px rgba(15, 111, 198, 0.18);
+  /* Gradients -------------------------------------------------------- */
+  --grad-brand: linear-gradient(135deg, #0f6fc6 0%, #0a5bb0 60%, #094e98 100%);
+  --grad-soft: linear-gradient(145deg, #eaf3fb 0%, #d9ecfb 100%);
+  --grad-text: linear-gradient(100deg, #0f6fc6 0%, #3f9ae0 55%, #0959a6 100%);
 
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
+  /* Elevation - layered ambient + contact shadows --------------------- */
+  --shadow-xs: 0 1px 2px rgba(15, 61, 110, 0.05), 0 2px 8px -2px rgba(15, 111, 198, 0.08);
+  --shadow-sm: 0 1px 2px rgba(15, 61, 110, 0.05), 0 4px 10px -4px rgba(15, 111, 198, 0.1),
+    0 12px 28px -12px rgba(15, 111, 198, 0.18);
+  --shadow-md: 0 2px 4px rgba(15, 61, 110, 0.06), 0 10px 22px -8px rgba(15, 111, 198, 0.16),
+    0 28px 56px -20px rgba(15, 111, 198, 0.22);
+  --shadow-lg: 0 4px 8px rgba(15, 61, 110, 0.06), 0 18px 36px -12px rgba(15, 111, 198, 0.2),
+    0 48px 96px -32px rgba(15, 111, 198, 0.28);
+  --shadow-wa: 0 6px 14px -6px rgba(37, 211, 102, 0.45),
+    0 18px 40px -12px rgba(37, 211, 102, 0.35);
+
+  /* Shape ------------------------------------------------------------- */
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-xl: 36px;
   --radius-full: 999px;
 
   /* Typography */
@@ -40,7 +52,7 @@
   --header-height: 76px;
 }
 
-/* --- Reset / base ------------------------------------------------ */
+/* --- Reset / base --------------------------------------------------- */
 *,
 *::before,
 *::after {
@@ -59,7 +71,9 @@ body {
   font-size: 1rem;
   line-height: 1.6;
   color: var(--color-text);
-  background-color: var(--color-white);
+  background:
+    radial-gradient(1200px 620px at 82% -12%, rgba(234, 243, 251, 0.75), transparent 62%),
+    linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -78,9 +92,10 @@ h2,
 h3,
 h4 {
   font-family: var(--font-heading);
-  line-height: 1.2;
+  line-height: 1.12;
   color: var(--color-text);
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 p {
@@ -91,7 +106,7 @@ button {
   font-family: inherit;
 }
 
-/* --- Layout helpers ---------------------------------------------- */
+/* --- Layout helpers -------------------------------------------------- */
 .container {
   width: 100%;
   max-width: var(--container-max);
@@ -100,55 +115,128 @@ button {
 }
 
 .section {
-  padding-block: clamp(56px, 8vw, 96px);
+  position: relative;
+  padding-block: clamp(64px, 9vw, 104px);
   scroll-margin-top: var(--header-height);
 }
 
-.section--tinted {
-  background-color: var(--color-primary-soft);
+/* Soft gradient meshes instead of flat fills --------------------------- */
+.section--soft {
+  background:
+    radial-gradient(820px 420px at 8% -6%, rgba(234, 243, 251, 0.85), transparent 62%),
+    radial-gradient(760px 400px at 94% 104%, rgba(210, 232, 248, 0.7), transparent 62%),
+    #ffffff;
 }
 
-/* --- Section headings -------------------------------------------- */
+.section--tinted {
+  background:
+    radial-gradient(900px 460px at 88% -8%, rgba(255, 255, 255, 0.95), transparent 58%),
+    radial-gradient(760px 420px at 6% 104%, rgba(205, 228, 246, 0.8), transparent 62%),
+    linear-gradient(180deg, #f4f9fe 0%, #eaf3fb 100%);
+}
+
+/* Decorative blurred blobs --------------------------------------------- */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(48px);
+  pointer-events: none;
+}
+
+.blob--primary {
+  background: radial-gradient(
+    circle at 32% 32%,
+    rgba(84, 168, 232, 0.5),
+    rgba(15, 111, 198, 0.24) 60%,
+    transparent 76%
+  );
+}
+
+.blob--light {
+  background: radial-gradient(
+    circle at 32% 32%,
+    rgba(236, 246, 253, 0.95),
+    rgba(214, 233, 249, 0.5) 62%,
+    transparent 78%
+  );
+}
+
+.blob--deep {
+  background: radial-gradient(
+    circle at 32% 32%,
+    rgba(180, 216, 240, 0.55),
+    rgba(11, 92, 166, 0.3) 62%,
+    transparent 78%
+  );
+}
+
+.blob--sm {
+  width: 220px;
+  height: 220px;
+}
+
+.blob--md {
+  width: 330px;
+  height: 330px;
+}
+
+.blob--lg {
+  width: 460px;
+  height: 460px;
+}
+
+/* --- Section headings -------------------------------------------------- */
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.8rem;
+  gap: 9px;
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-primary-darker);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .eyebrow::before {
   content: '';
-  width: 22px;
+  width: 24px;
   height: 3px;
   border-radius: var(--radius-full);
-  background: var(--color-primary);
+  background: var(--grad-brand);
 }
 
 .section-title {
-  font-size: clamp(1.7rem, 3.6vw, 2.5rem);
+  font-size: clamp(2rem, 4.4vw, 2.9rem);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
 }
 
 .section-subtitle {
-  font-size: clamp(1rem, 1.4vw, 1.1rem);
+  font-size: clamp(1.02rem, 1.5vw, 1.14rem);
+  line-height: 1.65;
   color: var(--color-text-muted);
   max-width: 640px;
-  margin-top: 14px;
+  margin-top: 16px;
 }
 
-/* --- Buttons ------------------------------------------------------ */
+/* Editorial gradient text highlight ------------------------------------- */
+.text-gradient {
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* --- Buttons ------------------------------------------------------------ */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 12px 22px;
+  position: relative;
+  padding: 13px 24px;
   border: none;
   border-radius: var(--radius-full);
   font-family: var(--font-body);
@@ -157,59 +245,103 @@ button {
   line-height: 1.2;
   text-decoration: none;
   cursor: pointer;
+  will-change: transform;
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
+    background-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Soft top-light sheen for dimension on branded buttons. */
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 55%);
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .btn:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.99);
 }
 
 .btn:focus-visible {
   outline: 3px solid var(--color-primary-light);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
 .btn--primary {
-  background: var(--color-primary);
+  background: var(--grad-brand);
   color: var(--color-white);
   box-shadow: var(--shadow-sm);
 }
 
 .btn--primary:hover {
-  background: var(--color-primary-dark);
   box-shadow: var(--shadow-md);
 }
 
 .btn--whatsapp {
-  background: var(--color-whatsapp);
+  background: linear-gradient(135deg, #2fdc73 0%, #1fbe5e 100%);
   color: var(--color-white);
-  box-shadow: 0 8px 20px rgba(37, 211, 102, 0.35);
+  box-shadow: var(--shadow-wa);
 }
 
 .btn--whatsapp:hover {
-  background: var(--color-whatsapp-dark);
+  background: linear-gradient(135deg, #33e07a 0%, #1daf5a 100%);
+  box-shadow: 0 10px 22px -8px rgba(37, 211, 102, 0.5),
+    0 28px 56px -16px rgba(37, 211, 102, 0.4);
 }
 
 .btn--outline {
-  background: var(--color-white);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
   color: var(--color-primary);
-  border: 1.5px solid var(--color-primary);
+  border: 1.5px solid rgba(15, 111, 198, 0.35);
+  box-shadow: var(--shadow-xs);
 }
 
 .btn--outline:hover {
-  background: var(--color-primary-light);
+  background: var(--color-white);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn--lg {
-  padding: 15px 30px;
+  padding: 16px 32px;
   font-size: 1.05rem;
 }
 
-/* --- Accessibility ------------------------------------------------- */
+/* --- Scroll-reveal system ----------------------------------------------- */
+/*
+ * Applied via the `appReveal` directive. Elements start faded/slid and
+ * transition in once they cross the viewport. `--in` always ends at the
+ * visible state, so `prefers-reduced-motion` users still see content.
+ */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.65s ease,
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal--in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.65s ease,
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+/* --- Accessibility ------------------------------------------------------- */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -240,7 +372,7 @@ button {
   transform: translateY(0);
 }
 
-/* --- Reduced motion ------------------------------------------------ */
+/* --- Reduced motion -------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

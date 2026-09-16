@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RevealDirective } from '../../directives/reveal.directive';
 import { buildWhatsAppUrl, whatsappConfig } from '../../config/whatsapp.config';
 
 interface Step {
@@ -10,6 +11,7 @@ interface Step {
 /** Step-by-step funnel that reinforces the WhatsApp journey. */
 @Component({
   selector: 'app-how-it-works',
+  imports: [RevealDirective],
   template: `
     <section class="how section" id="como-funciona">
       <div class="container">
@@ -22,8 +24,12 @@ interface Step {
         </div>
 
         <ol class="how__steps">
-          @for (step of steps; track step.number) {
-            <li class="how__step">
+          @for (step of steps; track step.number; let i = $index) {
+            <li
+              class="how__step"
+              appReveal
+              [appRevealDelay]="i * 90"
+            >
               <span class="how__step-number" aria-hidden="true">{{ step.number }}</span>
               <h3 class="how__step-title">{{ step.title }}</h3>
               <p class="how__step-text">{{ step.description }}</p>

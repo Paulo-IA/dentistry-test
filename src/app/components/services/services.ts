@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { whatsappConfig } from '../../config/whatsapp.config';
+import { RevealDirective } from '../../directives/reveal.directive';
 import { ToothIcon } from '../tooth-icon/tooth-icon';
 
 type ServiceIcon = 'restoration' | 'cleaning' | 'root-canal';
@@ -17,7 +18,7 @@ interface Service {
 /** Services section: the three main procedures with educational copy. */
 @Component({
   selector: 'app-services',
-  imports: [ToothIcon],
+  imports: [RevealDirective, ToothIcon],
   template: `
     <section class="services section" id="servicos">
       <div class="container">
@@ -30,8 +31,12 @@ interface Service {
         </div>
 
         <div class="services__grid">
-          @for (service of services; track service.id) {
-            <article class="card">
+          @for (service of services; track service.id; let i = $index) {
+            <article
+              class="card"
+              appReveal
+              [appRevealDelay]="i * 90"
+            >
               <div class="card__icon" aria-hidden="true">
                 @switch (service.icon) {
                   @case ('restoration') {

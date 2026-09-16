@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RevealDirective } from '../../directives/reveal.directive';
 import { buildWhatsAppUrl, whatsappConfig } from '../../config/whatsapp.config';
 
 type FeatureIcon = 'shield' | 'equipment' | 'care' | 'location' | 'hours' | 'plan';
@@ -13,6 +14,7 @@ interface Feature {
 /** Differentials + structure: informational grid, no promises or superlatives. */
 @Component({
   selector: 'app-differentials',
+  imports: [RevealDirective],
   template: `
     <section class="diff section section--tinted" id="estrutura">
       <div class="container">
@@ -25,8 +27,12 @@ interface Feature {
         </div>
 
         <div class="diff__grid">
-          @for (feature of features; track feature.id) {
-            <div class="diff__item">
+          @for (feature of features; track feature.id; let i = $index) {
+            <div
+              class="diff__item"
+              appReveal
+              [appRevealDelay]="i * 70"
+            >
               <div class="diff__icon" aria-hidden="true">
                 @switch (feature.icon) {
                   @case ('shield') {

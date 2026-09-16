@@ -1,8 +1,8 @@
 @use '../../../styles/variables' as *;
 
 .diff__heading {
-  max-width: 680px;
-  margin-bottom: 44px;
+  max-width: 700px;
+  margin-bottom: 48px;
 }
 
 .diff__grid {
@@ -12,28 +12,39 @@
 }
 
 .diff__item {
-  padding: 28px;
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(219, 233, 246, 0.85);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  box-shadow: var(--shadow-xs);
+  will-change: transform;
+  transition:
+    opacity 0.65s ease,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.3s ease;
 }
 
 .diff__item:hover {
+  transform: translateY(-5px);
   box-shadow: var(--shadow-md);
-  transform: translateY(-3px);
+  border-color: rgba(15, 111, 198, 0.22);
 }
 
 .diff__icon {
-  width: 50px;
-  height: 50px;
+  width: 52px;
+  height: 52px;
   display: grid;
   place-items: center;
   margin-bottom: 18px;
   border-radius: var(--radius-md);
-  background: var(--color-primary-light);
+  background: var(--grad-soft);
   color: var(--color-primary);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 10px 18px -12px rgba(15, 111, 198, 0.4);
 }
 
 .diff__icon svg {
@@ -42,20 +53,22 @@
 }
 
 .diff__title {
-  font-size: 1.12rem;
-  font-weight: 700;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
   margin-bottom: 8px;
 }
 
 .diff__text {
   font-size: 0.94rem;
+  line-height: 1.6;
   color: var(--color-text-muted);
 }
 
 .diff__cta {
   display: flex;
   justify-content: center;
-  margin-top: 44px;
+  margin-top: 48px;
 }
 
 /* Responsive ------------------------------------------------------------ */

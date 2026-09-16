@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { RevealDirective } from '../../directives/reveal.directive';
 import { buildWhatsAppUrl, whatsappConfig } from '../../config/whatsapp.config';
 
 interface FaqItem {
@@ -9,6 +10,7 @@ interface FaqItem {
 /** Accordion of neutral, educational frequently asked questions. */
 @Component({
   selector: 'app-faq',
+  imports: [RevealDirective],
   template: `
     <section class="faq section section--tinted" id="duvidas">
       <div class="container faq__inner">
@@ -22,7 +24,12 @@ interface FaqItem {
 
         <div class="faq__list">
           @for (item of items; track item.question; let i = $index) {
-            <div class="faq__item" [class.faq__item--open]="openIndex() === i">
+            <div
+              class="faq__item"
+              [class.faq__item--open]="openIndex() === i"
+              appReveal
+              [appRevealDelay]="i * 70"
+            >
               <button
                 class="faq__question"
                 [attr.aria-expanded]="openIndex() === i"
